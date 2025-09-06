@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\Coding\avplayer\build\build\CMakeFiles\512ee0643b2e7b920dcb8d9c31ed206e\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{BBCCF286-6F89-3A99-A96E-99C9FC6F7502}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

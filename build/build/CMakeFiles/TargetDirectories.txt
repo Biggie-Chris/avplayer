@@ -1,0 +1,4 @@
+E:/Coding/avplayer/build/build/CMakeFiles/av_player.dir
+E:/Coding/avplayer/build/build/CMakeFiles/QtDemo.dir
+E:/Coding/avplayer/build/build/CMakeFiles/ALL_BUILD.dir
+E:/Coding/avplayer/build/build/CMakeFiles/ZERO_CHECK.dir
