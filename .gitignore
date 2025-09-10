@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# CMake build directory
+/build/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -360,4 +363,5 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
-FodyWeavers.xsd
+FodyWeavers.xsd/ b u i l d /  
+ 
