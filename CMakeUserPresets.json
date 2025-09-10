@@ -1,9 +1,4 @@
 {
-    "version": 4,
-    "vendor": {
-        "conan": {}
-    },
-    "include": [
-        "build/build/generators/CMakePresets.json"
-    ]
+  "version": 4,
+  "vendor": { "microsoft.com/VisualStudioSettings/CMake/1.0": {} }
 }

@@ -2,32 +2,15 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "windows-base",
-      "hidden": true,
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "name": "release-vs",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "E:/Coding/avplayer/build",
+      "architecture": { "value": "x64" },
       "cacheVariables": {
         "CMAKE_C_STANDARD": "11",
-        "CMAKE_CXX_STANDARD": "17"
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "hostOS": [ "Windows" ],
-          "intelliSenseMode": "windows-msvc-x64",
-          "inheritEnvironments": [ "msvc_x64_x64" ] // 关键：让 VS 注入 cl.exe 等环境
-        }
+        "CMAKE_CXX_STANDARD": "17",
+        "CMAKE_TOOLCHAIN_FILE": "E:/Coding/avplayer/build/build/generators/conan_toolchain.cmake"
       }
-    },
-    {
-      "name": "x64-Debug",
-      "inherits": "windows-base",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
-    },
-    {
-      "name": "x64-Release",
-      "inherits": "windows-base",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
     }
   ]
 }

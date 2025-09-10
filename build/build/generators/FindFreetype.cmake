@@ -25,17 +25,17 @@ foreach(_DEPENDENCY ${freetype_FIND_DEPENDENCY_NAMES} )
     endif()
 endforeach()
 
-set(FREETYPE_VERSION_STRING "2.13.2")
-set(FREETYPE_INCLUDE_DIRS ${freetype_INCLUDE_DIRS_RELEASE} )
-set(FREETYPE_INCLUDE_DIR ${freetype_INCLUDE_DIRS_RELEASE} )
-set(FREETYPE_LIBRARIES ${freetype_LIBRARIES_RELEASE} )
-set(FREETYPE_DEFINITIONS ${freetype_DEFINITIONS_RELEASE} )
-
 set(Freetype_VERSION_STRING "2.13.2")
 set(Freetype_INCLUDE_DIRS ${freetype_INCLUDE_DIRS_RELEASE} )
 set(Freetype_INCLUDE_DIR ${freetype_INCLUDE_DIRS_RELEASE} )
 set(Freetype_LIBRARIES ${freetype_LIBRARIES_RELEASE} )
 set(Freetype_DEFINITIONS ${freetype_DEFINITIONS_RELEASE} )
+
+set(FREETYPE_VERSION_STRING "2.13.2")
+set(FREETYPE_INCLUDE_DIRS ${freetype_INCLUDE_DIRS_RELEASE} )
+set(FREETYPE_INCLUDE_DIR ${freetype_INCLUDE_DIRS_RELEASE} )
+set(FREETYPE_LIBRARIES ${freetype_LIBRARIES_RELEASE} )
+set(FREETYPE_DEFINITIONS ${freetype_DEFINITIONS_RELEASE} )
 
 
 # Only the last installed configuration BUILD_MODULES are included to avoid the collision
@@ -54,10 +54,10 @@ find_package_handle_standard_args(Freetype
                                   VERSION_VAR Freetype_VERSION)
 mark_as_advanced(Freetype_FOUND Freetype_VERSION)
 
-set(FREETYPE_FOUND 1)
-set(FREETYPE_VERSION "2.13.2")
-mark_as_advanced(FREETYPE_FOUND FREETYPE_VERSION)
 set(Freetype_FOUND 1)
 set(Freetype_VERSION "2.13.2")
 mark_as_advanced(Freetype_FOUND Freetype_VERSION)
+set(FREETYPE_FOUND 1)
+set(FREETYPE_VERSION "2.13.2")
+mark_as_advanced(FREETYPE_FOUND FREETYPE_VERSION)
 

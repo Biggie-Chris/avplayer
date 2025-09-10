@@ -1,5 +1,0 @@
-set(__QT_DEPLOY_TARGET_av_player_FILE E:/Coding/avplayer/build/build/Debug/av_player.lib)
-set(__QT_DEPLOY_TARGET_av_player_TYPE STATIC_LIBRARY)
-set(__QT_DEPLOY_TARGET_QtDemo_FILE E:/Coding/avplayer/build/build/Debug/QtDemo.exe)
-set(__QT_DEPLOY_TARGET_QtDemo_TYPE EXECUTABLE)
-set(__QT_DEPLOY_TARGET_QtDemo_RUNTIME_DLLS F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6OpenGLWidgetsd.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Multimediad.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Quickd.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6QmlModelsd.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Qmld.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Networkd.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6OpenGLd.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Widgetsd.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Guid.dll;F:/QT/6.7.3/6.7.3/msvc2022_64/bin/Qt6Cored.dll)

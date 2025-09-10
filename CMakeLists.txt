@@ -7,7 +7,7 @@ set(CMAKE_C_EXTENSIONS ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -77,9 +77,11 @@ else()
 endif()
 
 # ===== 可执行程序 QtDemo =====
-file(GLOB_RECURSE DEMO_SOURCE_FILES
+file(GLOB DEMO_SOURCE_FILES
     ${PROJECT_ROOT_DIR}/qt/*.cpp
     ${PROJECT_ROOT_DIR}/qt/*.h
+    ${PROJECT_ROOT_DIR}/qt/UI/*.cpp
+    ${PROJECT_ROOT_DIR}/qt/UI/*.h
 )
 
 add_executable(QtDemo ${DEMO_SOURCE_FILES})
@@ -117,3 +119,12 @@ add_custom_command(TARGET QtDemo POST_BUILD
           "$<TARGET_FILE:QtDemo>"
   COMMENT "Running windeployqt..."
 )
+
+if(MSVC)
+    target_include_directories(QtDemo SYSTEM PRIVATE
+        "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/include"
+        "C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/ucrt"
+        "C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/um"
+        "C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/shared"
+    )
+endif()
