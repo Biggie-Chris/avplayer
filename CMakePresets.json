@@ -1,16 +1,49 @@
 ﻿{
-  "version": 3,
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21
+  },
+
   "configurePresets": [
     {
-      "name": "release-vs",
+      "name": "vs2022-x64",
+      "displayName": "VS2022 + vcpkg (x64)",
       "generator": "Visual Studio 17 2022",
-      "binaryDir": "E:/Coding/avplayer/build",
       "architecture": { "value": "x64" },
+      "toolset": { "value": "v143" },
+      "binaryDir": "${sourceDir}/build/${presetName}",
+
       "cacheVariables": {
-        "CMAKE_C_STANDARD": "11",
+
+        "CMAKE_TOOLCHAIN_FILE": "F:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+
+  
+        "CMAKE_PREFIX_PATH": "F:/Qt/6.7.3/6.7.3/msvc2022_64/lib/cmake",
+
         "CMAKE_CXX_STANDARD": "17",
-        "CMAKE_TOOLCHAIN_FILE": "E:/Coding/avplayer/build/build/generators/conan_toolchain.cmake"
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "ON",
+
+ 
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+        "CMAKE_C_FLAGS": "/utf-8",
+        "CMAKE_CXX_FLAGS": "/utf-8"
       }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "build-debug",
+      "configurePreset": "vs2022-x64",
+      "configuration": "Debug"
+    },
+    {
+      "name": "build-release",
+      "configurePreset": "vs2022-x64",
+      "configuration": "Release"
     }
   ]
 }

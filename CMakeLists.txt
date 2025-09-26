@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.21)
-project(av_player VERSION 0.0.1)
+project(my_player VERSION 0.0.1)
 
 # ----- 编译选项 -----
 set(CMAKE_C_STANDARD 11)
@@ -9,9 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
 
 # ----- 路径与宏 -----
 set(PROJECT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -20,21 +17,17 @@ set(CACHE_DIR    "${PROJECT_ROOT_DIR}/cache")
 add_definitions(-DRESOURCE_DIR="${RESOURCE_DIR}")
 add_definitions(-DCACHE_DIR="${CACHE_DIR}")
 
-# ----- 第三方（Conan导入的包）-----
+# ----- 使用 vcpkg 导入第三方包 -----
 find_package(ffmpeg REQUIRED)
-find_package(stb    REQUIRED)
-find_package(glm    REQUIRED)
-
-# （Conan通常会自己设置include目录；以下两行不是必须，可省略）
-# include_directories(${ffmpeg_INCLUDE_DIRS})
-# include_directories(${stb_INCLUDE_DIRS})
+find_package(OpenCV REQUIRED)
+find_package(stb REQUIRED)
+find_package(glm REQUIRED)
 
 # ----- Qt6 -----
 list(PREPEND CMAKE_PREFIX_PATH "F:/Qt/6.7.3/6.7.3/msvc2022_64/lib/cmake")
-set(Qt6_DIR "F:/Qt/6.7.3/msvc2022_64/lib/cmake/Qt6" CACHE PATH "" FORCE)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets Multimedia Quick)
 
-# ===== 静态库 av_player =====
+# ===== 静态库 my_player =====
 file(GLOB_RECURSE LIBRARY_SOURCE_FILES
     ${PROJECT_ROOT_DIR}/LearnAV/*.cpp
     ${PROJECT_ROOT_DIR}/LearnAV/*.h
@@ -42,84 +35,51 @@ file(GLOB_RECURSE LIBRARY_SOURCE_FILES
 
 add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCE_FILES})
 
-# 如果库里也用到 Qt API，链接上 Qt（没有用到可以删掉这三项）
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-        Qt6::Core Qt6::Gui Qt6::Widgets
-        ffmpeg::ffmpeg stb::stb glm::glm
+# 头文件路径
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${PROJECT_ROOT_DIR}/LearnAV
+    ${PROJECT_ROOT_DIR}/LearnAV/src
+    ${PROJECT_ROOT_DIR}/LearnAV/src/Interface
+    ${stb_INCLUDE_DIRS}
+    ${glm_INCLUDE_DIRS}
 )
 
-# InspireFace（Windows 下用 .lib；Linux 用 .so；macOS 用 .dylib）
-if (WIN32)
-  find_library(InspireFace_LIB
-    NAMES InspireFace
-    PATHS "${PROJECT_ROOT_DIR}/3rdparty/InspireFace/lib"
-    NO_DEFAULT_PATH
-  )
-elseif(APPLE)
-  find_library(InspireFace_LIB
-    NAMES InspireFace libInspireFace
-    PATHS "${PROJECT_ROOT_DIR}/3rdparty/InspireFace/lib"
-    NO_DEFAULT_PATH
-  )
-else()
-  find_library(InspireFace_LIB
-    NAMES InspireFace libInspireFace
-    PATHS "${PROJECT_ROOT_DIR}/3rdparty/InspireFace/lib"
-    NO_DEFAULT_PATH
-  )
-endif()
+# 链接库
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    avcodec
+    avformat
+    avutil
+    swresample
+    swscale
+    ${OpenCV_LIBS}
+)
 
-if (InspireFace_LIB)
-  target_link_libraries(${PROJECT_NAME} PRIVATE ${InspireFace_LIB})
-else()
-  message(WARNING "InspireFace library not found; building without it.")
-endif()
-
-# ===== 可执行程序 QtDemo =====
-file(GLOB DEMO_SOURCE_FILES
+# ===== QtDemo 可执行程序 =====
+file(GLOB_RECURSE DEMO_SOURCE_FILES
     ${PROJECT_ROOT_DIR}/qt/*.cpp
     ${PROJECT_ROOT_DIR}/qt/*.h
-    ${PROJECT_ROOT_DIR}/qt/UI/*.cpp
-    ${PROJECT_ROOT_DIR}/qt/UI/*.h
 )
 
 add_executable(QtDemo ${DEMO_SOURCE_FILES})
 
-target_include_directories(QtDemo PRIVATE
-    ${PROJECT_ROOT_DIR}/qt
-)
+# 为 QtDemo 添加头文件路径
+target_include_directories(QtDemo PRIVATE ${PROJECT_ROOT_DIR}/qt ${PROJECT_ROOT_DIR}/LearnAV/qt)
+# 为 QtDemo 添加链接库
+target_link_libraries(QtDemo Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets Qt6::Multimedia Qt6::Quick ${PROJECT_NAME})
 
-target_link_libraries(QtDemo
-    PRIVATE
-        Qt6::Core Qt6::Gui Qt6::Widgets
-        Qt6::OpenGL Qt6::OpenGLWidgets
-        Qt6::Multimedia Qt6::Quick
-        ${PROJECT_NAME}
-)
-
-# 若 InspireFace 是 DLL，运行时需要拷贝到可执行目录（可选）
-if (WIN32 AND EXISTS "${PROJECT_ROOT_DIR}/3rdparty/InspireFace/bin/InspireFace.dll")
-  add_custom_command(TARGET QtDemo POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      "${PROJECT_ROOT_DIR}/3rdparty/InspireFace/bin/InspireFace.dll"
-      $<TARGET_FILE_DIR:QtDemo>)
-endif()
-
-# Qt 安装目录（按你的实际路径改）
+# ===== 部署 Qt DLL =====
 set(QT_BIN_DIR "F:/Qt/6.7.3/6.7.3/msvc2022_64/bin")
-
-# 根据配置选择 debug/release
 set(QT_DEPLOY_MODE "$<IF:$<CONFIG:Debug>,--debug,--release>")
 
 add_custom_command(TARGET QtDemo POST_BUILD
   COMMAND "${QT_BIN_DIR}/windeployqt.exe" ${QT_DEPLOY_MODE}
-          --no-translations            # 可选：不拷贝翻译
-          --compiler-runtime           # 可选：拷贝 MSVC 运行库
+          --no-translations
+          --compiler-runtime
           "$<TARGET_FILE:QtDemo>"
   COMMENT "Running windeployqt..."
 )
 
+# ===== MSVC 兼容设置 =====
 if(MSVC)
     target_include_directories(QtDemo SYSTEM PRIVATE
         "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/include"

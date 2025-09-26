@@ -1,22 +1,26 @@
+//
+// Copyright (c) 2024 Yellow. All rights reserved.
+//
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QTranslator>
+
 #include "MainWindow.h"
 
 int main(int argc, char* argv[]) {
-    // ÉèÖÃ¹²ÏíOpenGLÉÏÏÂÎÄÊôĞÔ
+    // è®¾ç½®å…±äº«OpenGLä¸Šä¸‹æ–‡å±æ€§
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
-    // ÅäÖÃOpenGL Surface¸ñÊ½
+    // é…ç½®OpenGL Surfaceæ ¼å¼
     QSurfaceFormat fmt;
-    fmt.setDepthBufferSize(24);                   // ÉèÖÃÉî¶È»º³åÇø´óĞ¡
-    fmt.setVersion(3, 3);                         // ÉèÖÃOpenGL°æ±¾
-    fmt.setProfile(QSurfaceFormat::CoreProfile);  // ÉèÖÃOpenGLÅäÖÃÎÄ¼ş
-    QSurfaceFormat::setDefaultFormat(fmt);        // ÉèÖÃÄ¬ÈÏ¸ñÊ½
+    fmt.setDepthBufferSize(24);                   // è®¾ç½®æ·±åº¦ç¼“å†²åŒºå¤§å°
+    fmt.setVersion(3, 3);                         // è®¾ç½®OpenGLç‰ˆæœ¬
+    fmt.setProfile(QSurfaceFormat::CoreProfile);  // è®¾ç½®OpenGLé…ç½®æ–‡ä»¶
+    QSurfaceFormat::setDefaultFormat(fmt);        // è®¾ç½®é»˜è®¤æ ¼å¼
 
-    QApplication a(argc, argv);  // ´´½¨QApplication¶ÔÏó
-    MainWindow w;                // ´´½¨Ö÷´°¿Ú¶ÔÏó
-    w.show();                    // ÏÔÊ¾Ö÷´°¿Ú
+    QApplication a(argc, argv);  // åˆ›å»ºQApplicationå¯¹è±¡
+    MainWindow w;                // åˆ›å»ºä¸»çª—å£å¯¹è±¡
+    w.show();                    // æ˜¾ç¤ºä¸»çª—å£
 
-    return a.exec();  // ½øÈëÓ¦ÓÃ³ÌĞòÊÂ¼şÑ­»·
+    return a.exec();  // è¿›å…¥åº”ç”¨ç¨‹åºäº‹ä»¶å¾ªç¯
 }

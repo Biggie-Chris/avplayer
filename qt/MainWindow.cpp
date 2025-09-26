@@ -1,72 +1,91 @@
+//
+// Copyright (c) 2024 Yellow. All rights reserved.
+//
+
 #include "MainWindow.h"
-#include "UI/ControllerWidget.h"
-#include "UI/PlayerWidget.h"
 
-#include <QFrame>
-#include <QMouseEvent>
-#include <QResizeEvent>
-#include <QSlider>
+#include <QApplication>
+#include <QSplitter>
 #include <QVBoxLayout>
+#include <iostream>
 
-MainWindow::MainWindow(QWidget* parent) : QWidget(parent) {
-    // Ö÷²¼¾Ö
-    auto* vbox = new QVBoxLayout(this);
+MainWindow::PlaybackListener::PlaybackListener(MainWindow *window) : m_window(window) {}
+
+void MainWindow::PlaybackListener::NotifyPlaybackStarted() { std::cout << "NotifyPlaybackStarted" << std::endl; }
+
+void MainWindow::PlaybackListener::NotifyPlaybackTimeChanged(float timeStamp, float duration) {
+    m_window->m_progressSlider->setValue(static_cast<int>(timeStamp / duration * 1000));
+}
+
+void MainWindow::PlaybackListener::NotifyPlaybackPaused() { std::cout << "NotifyPlaybackPaused" << std::endl; }
+
+void MainWindow::PlaybackListener::NotifyPlaybackEOF() { std::cout << "NotifyPlaybackEOF" << std::endl; }
+
+MainWindow::MainWindow() : QWidget() {
+    // åˆ›å»ºå…±äº«çš„OpenGLä¸Šä¸‹æ–‡
+    av::GLContext sharedContext{QOpenGLContext::globalShareContext()};
+    m_player = std::shared_ptr<av::IPlayer>(av::IPlayer::Create(sharedContext));
+    m_player->SetPlaybackListener(std::make_shared<PlaybackListener>(this));
+
+    // è®¾ç½®å¸ƒå±€
+    auto *vbox = new QVBoxLayout();
     vbox->setContentsMargins(0, 0, 0, 0);
     setLayout(vbox);
 
-    // ²¥·ÅÇøÓò£¨ÓÉ PlayerWidget ³ÐÔØ£»ÄÚ²¿ÏÖÔÚÊÇÕ¼Î» QLabel£©
+    // æ·»åŠ æ’­æ”¾å™¨ä¸»ç•Œé¢
     m_playerWidget = new PlayerWidget(this, m_player);
-    vbox->addWidget(m_playerWidget, /*stretch*/1);
+    vbox->addWidget(m_playerWidget);
 
-    // ½ø¶ÈÌõ
+    // æ·»åŠ è¿›åº¦æ¡
     m_progressSlider = new QSlider(Qt::Horizontal, this);
     m_progressSlider->setRange(0, 1000);
     m_progressSlider->setValue(0);
-    connect(m_progressSlider, &QSlider::sliderMoved,
-        this, &MainWindow::onSliderMoved);
+    // è¿žæŽ¥è¿›åº¦æ¡çš„ sliderMoved ä¿¡å·åˆ°è‡ªå®šä¹‰çš„æ§½å‡½æ•°
+    connect(m_progressSlider, &QSlider::sliderMoved, this, &MainWindow::onSliderMoved);
     vbox->addWidget(m_progressSlider);
 
-    // ¿ØÖÆÌõ£¨µ¼Èë/²¥·Å/µ¼³ö/ÂË¾µ°´Å¥£©
+    // æ·»åŠ æ’­æ”¾æŽ§ä»¶
     m_controllerWidget = new ControllerWidget(this, m_player);
     vbox->addWidget(m_controllerWidget);
 
-    setMinimumSize(800, 450);
+    // è®¾ç½®çª—å£æœ€å°å°ºå¯¸
+    setMinimumWidth(1280);
+    setMinimumHeight(720);
 }
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::onSliderMoved(int value) {
-    // ×îÐ¡Ê¾Àý£ºÔÝÎÞÕæÊµ Seek µ÷ÓÃ
-    Q_UNUSED(value);
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    // å¤„ç†çª—å£å¤§å°è°ƒæ•´äº‹ä»¶
+    QWidget::resizeEvent(event);
 }
 
-// ³ß´ç±ä»¯
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-    QWidget::resizeEvent(event); // ±£Áô»ùÀàÐÐÎª
-    // TODO: ÐèÒªÊ±ÔÚÕâÀï¼Ó×Ô¼ºµÄ²¼¾Ö/ÊÓÍ¼¸üÐÂÂß¼­
-}
-
-// Êó±ê°´ÏÂ
-void MainWindow::mousePressEvent(QMouseEvent* event)
-{
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+    // å¤„ç†é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
     QWidget::mousePressEvent(event);
 }
 
-// Êó±êÒÆ¶¯
-void MainWindow::mouseMoveEvent(QMouseEvent* event)
-{
+void MainWindow::mouseMoveEvent(QMouseEvent *event) {
+    // å¤„ç†é¼ æ ‡ç§»åŠ¨äº‹ä»¶
     QWidget::mouseMoveEvent(event);
 }
 
-// Êó±êÊÍ·Å
-void MainWindow::mouseReleaseEvent(QMouseEvent* event)
-{
+void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
+    // å¤„ç†é¼ æ ‡é‡Šæ”¾äº‹ä»¶
     QWidget::mouseReleaseEvent(event);
 }
 
-// Êó±êË«»÷
-void MainWindow::mouseDoubleClickEvent(QMouseEvent* event)
-{
+void MainWindow::mouseDoubleClickEvent(QMouseEvent *event) {
+    // å¤„ç†é¼ æ ‡åŒå‡»äº‹ä»¶
     QWidget::mouseDoubleClickEvent(event);
+    if (windowState() == Qt::WindowMaximized) {
+        showNormal();  // å¦‚æžœçª—å£å·²æœ€å¤§åŒ–ï¼Œåˆ™æ¢å¤æ­£å¸¸å¤§å°
+    } else {
+        showMaximized();  // å¦åˆ™ï¼Œæœ€å¤§åŒ–çª—å£
+    }
+}
+
+void MainWindow::onSliderMoved(int value) {
+    // å¤„ç†è¿›åº¦æ¡æ»‘åŠ¨äº‹ä»¶
+    m_player->SeekTo(static_cast<float>(value) / 1000);
 }

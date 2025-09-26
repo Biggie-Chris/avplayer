@@ -1,17 +1,23 @@
+//
+// Copyright (c) 2024 Yellow. All rights reserved.
+//
+
 #include "PlayerWidget.h"
-#include <QLabel>
+
 #include <QVBoxLayout>
 
-PlayerWidget::PlayerWidget(QWidget* parent, std::shared_ptr<av::IPlayer> player)
-    : QWidget(parent), m_player(std::move(player)) {
-    auto* layout = new QVBoxLayout(this);
+#include "IPlayer.h"
+#include "OpenGLView.h"
 
-    // 占位：实际项目里应当用 OpenGLView 或播放器界面
-    auto* placeholder = new QLabel("PlayerWidget (占位)", this);
-    placeholder->setAlignment(Qt::AlignCenter);
+PlayerWidget::PlayerWidget(QWidget *parent, std::shared_ptr<av::IPlayer> player) : QWidget(parent), m_player(player) {
+    m_openGLView = new av::OpenGLView(this);
+    if (m_player) m_player->AttachDisplayView(m_openGLView->GetVideoDisplayView());
 
-    layout->addWidget(placeholder);
-    setLayout(layout);
+    auto *vbox = new QVBoxLayout(this);
+    vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->addWidget(m_openGLView);
 }
 
-PlayerWidget::~PlayerWidget() = default;
+PlayerWidget::~PlayerWidget() {
+    if (m_player && m_openGLView) m_player->DetachDisplayView(m_openGLView->GetVideoDisplayView());
+}
